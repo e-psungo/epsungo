@@ -73,10 +73,10 @@ Configuração prevista:
 
 ### Passos
 
-1. Suba o projeto para um repositório no GitHub.
-2. No Render, crie um novo Blueprint ou Web Service a partir desse repositório.
+1. Abra o botão "Deploy to Render" deste repositório.
+2. Crie um Blueprint ou Web Service a partir de `e-psungo/epsungo`.
 3. Defina `ADMIN_PASSWORD` no painel do Render.
-4. Faça o primeiro deploy.
+4. Confirme o plano com disco persistente e faça o primeiro deploy.
 
 ## Estrutura
 
