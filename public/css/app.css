@@ -1,0 +1,414 @@
+:root,
+[data-bs-theme="dark"] {
+  --nexus-bg: #0a1220;
+  --nexus-bg-accent: #122746;
+  --nexus-surface: rgba(15, 25, 43, 0.88);
+  --nexus-surface-2: rgba(23, 38, 64, 0.96);
+  --nexus-border: rgba(255, 255, 255, 0.09);
+  --nexus-text: #edf4ff;
+  --nexus-muted: #9fb3d1;
+  --nexus-primary: #3b82f6;
+  --nexus-primary-soft: rgba(59, 130, 246, 0.18);
+  --nexus-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+[data-bs-theme="light"] {
+  --nexus-bg: #eef4fb;
+  --nexus-bg-accent: #d9e8fb;
+  --nexus-surface: rgba(255, 255, 255, 0.9);
+  --nexus-surface-2: rgba(245, 249, 255, 0.98);
+  --nexus-border: rgba(15, 23, 42, 0.08);
+  --nexus-text: #10203a;
+  --nexus-muted: #5d708f;
+  --nexus-primary: #2563eb;
+  --nexus-primary-soft: rgba(37, 99, 235, 0.12);
+  --nexus-shadow: 0 20px 60px rgba(41, 72, 122, 0.12);
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  color: var(--nexus-text);
+  background:
+    radial-gradient(circle at top left, var(--nexus-bg-accent) 0%, transparent 32%),
+    radial-gradient(circle at right top, rgba(59, 130, 246, 0.15) 0%, transparent 22%),
+    linear-gradient(180deg, var(--nexus-bg) 0%, color-mix(in srgb, var(--nexus-bg) 88%, #000 12%) 100%);
+  transition: background .25s ease, color .25s ease;
+}
+
+.auth-body,
+.app-shell {
+  min-height: 100vh;
+}
+
+.glass-card,
+.hero-card,
+.panel,
+.surface-card,
+.admin-modal {
+  border: 1px solid var(--nexus-border);
+  box-shadow: var(--nexus-shadow);
+}
+
+.glass-card,
+.hero-card,
+.panel {
+  background: linear-gradient(180deg, var(--nexus-surface), var(--nexus-surface-2));
+  border-radius: 28px;
+  backdrop-filter: blur(12px);
+}
+
+.hero-card {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--nexus-primary) 18%, transparent), var(--nexus-surface-2));
+}
+
+.panel-sidebar {
+  position: sticky;
+  top: 1rem;
+}
+
+.surface-card,
+.admin-modal {
+  background: linear-gradient(180deg, var(--nexus-surface), var(--nexus-surface-2));
+}
+
+.admin-modal {
+  color: var(--nexus-text);
+}
+
+.text-body-secondary,
+.form-text,
+.small {
+  color: var(--nexus-muted) !important;
+}
+
+.eyebrow,
+.section-title {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: .75rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--nexus-primary) 65%, var(--nexus-text) 35%);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--nexus-primary), color-mix(in srgb, var(--nexus-primary) 75%, #7cb5ff 25%));
+  border: none;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--nexus-primary) 24%, transparent);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--nexus-primary) 90%, #000 10%), var(--nexus-primary));
+}
+
+.btn-surface {
+  background: color-mix(in srgb, var(--nexus-surface-2) 85%, transparent);
+  color: var(--nexus-text);
+  border: 1px solid var(--nexus-border);
+}
+
+.btn-surface:hover,
+.btn-surface:focus {
+  background: var(--nexus-primary-soft);
+  color: var(--nexus-text);
+  border-color: color-mix(in srgb, var(--nexus-primary) 45%, transparent);
+}
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+.form-control,
+.form-select,
+.modal-content,
+textarea.form-control {
+  background-color: color-mix(in srgb, var(--nexus-surface-2) 78%, transparent) !important;
+  color: var(--nexus-text) !important;
+  border-color: var(--nexus-border) !important;
+  border-radius: 16px;
+}
+
+.form-control::placeholder {
+  color: color-mix(in srgb, var(--nexus-muted) 88%, transparent);
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--nexus-primary) 20%, transparent);
+  border-color: color-mix(in srgb, var(--nexus-primary) 55%, transparent) !important;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.mini-stat,
+.content-block,
+.mini-feature,
+.empty-state {
+  border-radius: 20px;
+  border: 1px solid var(--nexus-border);
+  background: color-mix(in srgb, var(--nexus-surface-2) 86%, transparent);
+}
+
+.mini-stat {
+  padding: 14px;
+}
+
+.mini-stat span {
+  display: block;
+  color: var(--nexus-muted);
+  font-size: .78rem;
+  margin-bottom: 4px;
+}
+
+.mini-stat strong {
+  font-size: 1rem;
+}
+
+.content-block {
+  padding: 1rem;
+}
+
+.contact-list {
+  display: grid;
+  gap: 10px;
+  max-height: 48vh;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.contact-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--nexus-text);
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--nexus-surface-2) 80%, transparent);
+  transition: all .2s ease;
+}
+
+.contact-item:hover,
+.contact-item.active {
+  transform: translateY(-1px);
+  background: var(--nexus-primary-soft);
+  border-color: color-mix(in srgb, var(--nexus-primary) 40%, transparent);
+}
+
+.avatar-chip {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--nexus-primary) 28%, transparent), color-mix(in srgb, var(--nexus-primary) 10%, transparent));
+  color: var(--nexus-text);
+  flex: 0 0 auto;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.chat-header {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--nexus-primary) 8%, transparent), transparent);
+}
+
+.chat-body {
+  min-height: 64vh;
+  max-height: 64vh;
+  overflow: auto;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.message-bubble {
+  max-width: min(86%, 680px);
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--nexus-surface-2) 88%, transparent);
+  border: 1px solid var(--nexus-border);
+}
+
+.message-bubble.mine {
+  margin-left: auto;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--nexus-primary) 28%, transparent), color-mix(in srgb, var(--nexus-primary) 12%, transparent));
+}
+
+.message-bubble .meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  color: var(--nexus-muted);
+  font-size: .78rem;
+  margin-bottom: 10px;
+}
+
+.message-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chat-image {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 18px;
+  border: 1px solid var(--nexus-border);
+}
+
+.crypto-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-soft {
+  padding: .6rem .9rem;
+}
+
+.code-box {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .75rem;
+}
+
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.check-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.check-list i,
+.mini-feature i {
+  color: #2fb57e;
+}
+
+.hero-grid,
+.mini-feature {
+  display: grid;
+  gap: 12px;
+}
+
+.mini-feature {
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  padding: .95rem 1rem;
+}
+
+.empty-state {
+  max-width: 440px;
+  padding: 2rem;
+}
+
+.empty-icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  background: var(--nexus-primary-soft);
+  margin-inline: auto;
+  font-size: 1.75rem;
+}
+
+.signature-tag {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  z-index: 1030;
+  font-size: .78rem;
+  padding: .45rem .7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nexus-surface-2) 88%, transparent);
+  border: 1px solid var(--nexus-border);
+  color: var(--nexus-muted);
+  backdrop-filter: blur(8px);
+}
+
+.theme-light-icon {
+  display: none;
+}
+
+[data-bs-theme="light"] .theme-light-icon {
+  display: inline-block;
+}
+
+[data-bs-theme="light"] .theme-dark-icon {
+  display: none;
+}
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--nexus-text);
+  --bs-table-border-color: var(--nexus-border);
+  --bs-table-striped-bg: color-mix(in srgb, var(--nexus-primary) 6%, transparent);
+  --bs-table-hover-bg: color-mix(in srgb, var(--nexus-primary) 10%, transparent);
+}
+
+.alert {
+  border-radius: 18px;
+}
+
+.link-underline,
+.link-light {
+  color: var(--nexus-primary) !important;
+}
+
+@media (max-width: 1399px) {
+  .panel-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 1199px) {
+  .chat-body {
+    min-height: 48vh;
+    max-height: 48vh;
+  }
+}
+
+@media (max-width: 767px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-body {
+    min-height: 42vh;
+    max-height: 42vh;
+  }
+
+  .message-bubble {
+    max-width: 100%;
+  }
+
+  .signature-tag {
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+    text-align: center;
+  }
+}
