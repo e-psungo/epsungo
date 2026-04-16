@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Chat</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/static/css/app.css" rel="stylesheet">
+</head>
+<body class="app-shell">
+  <div class="container-fluid px-3 px-lg-4 py-3 py-lg-4">
+    <div class="row g-3 g-xxl-4">
+      <aside class="col-12 col-xxl-3">
+        <div class="panel panel-sidebar h-100 p-3 p-lg-4">
+          <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+            <div>
+              <div class="eyebrow">Nexus Secure Workspace</div>
+              <h2 class="h4 fw-bold mb-1"><%= currentUser.fullName %></h2>
+              <div class="text-body-secondary">@<%= currentUser.username %> · <span class="text-capitalize"><%= currentUser.role %></span></div>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-surface btn-icon" id="themeToggle" type="button" title="Alternar tema">
+                <i class="bi bi-moon-stars-fill theme-dark-icon"></i>
+                <i class="bi bi-sun-fill theme-light-icon"></i>
+              </button>
+              <form method="post" action="/logout"><button class="btn btn-surface" type="submit">Sair</button></form>
+            </div>
+          </div>
+
+          <div class="stats-grid mb-4">
+            <div class="mini-stat">
+              <span>PKI</span>
+              <strong><%= certificateOk ? 'Válido' : 'Inválido' %></strong>
+            </div>
+            <div class="mini-stat">
+              <span>Canal</span>
+              <strong>WebSocket</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Integridade</span>
+              <strong>SHA-3-512</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Cifra</span>
+              <strong>PGP / DH</strong>
+            </div>
+          </div>
+
+          <div class="content-block mb-4">
+            <div class="section-title mb-2">Certificado digital</div>
+            <div class="small text-body-secondary mb-1">Serial: <%= cert.serial %></div>
+            <div class="small text-body-secondary">Emitido por: <%= cert.issuer %></div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="section-title mb-0">Contactos</div>
+            <span class="badge text-bg-primary-subtle text-primary-emphasis"><%= contacts.length %></span>
+          </div>
+          <div class="contact-list">
+            <% contacts.forEach(contact => { %>
+              <a href="/app?user=<%= contact.id %>" class="contact-item <%= selectedId === contact.id ? 'active' : '' %>">
+                <div class="d-flex align-items-center gap-3 min-w-0">
+                  <div class="avatar-chip"><%= contact.full_name.split(' ').map(v => v[0]).slice(0,2).join('').toUpperCase() %></div>
+                  <div class="min-w-0">
+                    <strong class="d-block text-truncate"><%= contact.full_name %></strong>
+                    <div class="small text-body-secondary text-truncate">@<%= contact.username %> · <%= contact.role %></div>
+                  </div>
+                </div>
+                <% if (unreadMap[contact.id]) { %><span class="badge rounded-pill text-bg-danger"><%= unreadMap[contact.id] %></span><% } %>
+              </a>
+            <% }) %>
+          </div>
+
+          <% if (currentUser.role === 'admin') { %>
+          <div class="content-block mt-4">
+            <div class="section-title mb-2">Administração</div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adminModal"><i class="bi bi-people"></i> Gerir utilizadores</button>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </aside>
+
+      <main class="col-12 col-xxl-6">
+        <div class="panel h-100 d-flex flex-column">
+          <div class="chat-header p-3 p-lg-4 border-bottom border-body-tertiary">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div>
+                <div class="eyebrow">Conversa segura</div>
+                <h1 class="h4 fw-bold mb-1"><%= contacts.find(c => c.id === selectedId)?.full_name || 'Selecione um contacto' %></h1>
+                <div class="text-body-secondary small">Mensagens de texto e imagem com verificação de integridade, assinatura digital e notificação em tempo real.</div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <span class="badge rounded-pill text-bg-success-subtle text-success-emphasis badge-soft"><i class="bi bi-shield-lock"></i> Sessão protegida</span>
+                <span class="badge rounded-pill text-bg-info-subtle text-info-emphasis badge-soft"><i class="bi bi-bell"></i> Alertas ativos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-body p-3 p-lg-4" id="chatBody">
+            <% if (!conversation.length) { %>
+              <div class="empty-state text-center mx-auto my-auto">
+                <div class="empty-icon mb-3"><i class="bi bi-chat-square-dots"></i></div>
+                <h3 class="h5 fw-bold">Nenhuma mensagem nesta conversa</h3>
+                <p class="text-body-secondary mb-0">Envie a primeira mensagem segura para iniciar o histórico desta sessão.</p>
+              </div>
+            <% } %>
+            <% conversation.forEach(msg => { %>
+              <div class="message-bubble <%= msg.sender_id === currentUser.id ? 'mine' : 'theirs' %>">
+                <div class="meta">
+                  <span><%= msg.sender_name %></span>
+                  <span><%= new Date(msg.created_at).toLocaleString('pt-PT') %></span>
+                </div>
+                <% if (msg.message_type === 'image') { %>
+                  <img src="/media/<%= msg.id %>" class="chat-image" alt="Imagem segura">
+                  <div class="small text-body-secondary mt-2">Imagem protegida · <%= msg.original_name %></div>
+                <% } else { %>
+                  <div class="message-text"><%= msg.preview %></div>
+                <% } %>
+                <div class="crypto-badges mt-2">
+                  <span class="badge rounded-pill text-bg-secondary"><%= msg.cipher_mode %></span>
+                  <span class="badge rounded-pill <%= msg.integrity ? 'text-bg-success' : 'text-bg-danger' %>">Integridade</span>
+                  <span class="badge rounded-pill <%= msg.signatureOk ? 'text-bg-primary' : 'text-bg-danger' %>">Assinatura</span>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <% if (selectedId) { %>
+          <div class="border-top border-body-tertiary p-3 p-lg-4">
+            <form id="messageForm" class="d-grid gap-3" enctype="multipart/form-data">
+              <input type="hidden" name="receiverId" value="<%= selectedId %>">
+              <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                  <label class="form-label small text-body-secondary mb-1">Modo criptográfico</label>
+                  <select class="form-select form-select-lg" name="cipherMode">
+                    <option value="pgp-rsa-aes256">PGP RSA + AES-256</option>
+                    <option value="dh-aes256">DH simulado + AES-256</option>
+                  </select>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label small text-body-secondary mb-1">Imagem segura</label>
+                  <input class="form-control form-control-lg" type="file" name="image" accept="image/*">
+                </div>
+              </div>
+              <div>
+                <label class="form-label small text-body-secondary mb-1">Mensagem</label>
+                <textarea class="form-control form-control-lg" rows="4" name="message" placeholder="Escreva uma mensagem segura..."></textarea>
+              </div>
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="text-body-secondary small"><i class="bi bi-info-circle"></i> As mensagens são assinadas e verificadas automaticamente.</div>
+                <button class="btn btn-primary btn-lg px-4" type="submit"><i class="bi bi-send"></i> Enviar</button>
+              </div>
+            </form>
+          </div>
+          <% } %>
+        </div>
+      </main>
+
+      <section class="col-12 col-xxl-3">
+        <div class="panel h-100 p-3 p-lg-4 d-flex flex-column gap-4">
+          <div class="content-block">
+            <div class="section-title mb-3">Compliance criptográfico</div>
+            <ul class="check-list">
+              <li><i class="bi bi-check2-circle"></i> RSA 1024 para troca de chaves e assinaturas</li>
+              <li><i class="bi bi-check2-circle"></i> Hashes SHA-256, SHA-512 e SHA-3-512</li>
+              <li><i class="bi bi-check2-circle"></i> PKI simulada com CA raiz autoassinada</li>
+              <li><i class="bi bi-check2-circle"></i> Notificações em tempo real com WebSocket</li>
+              <li><i class="bi bi-check2-circle"></i> Gestão administrativa completa de utilizadores</li>
+            </ul>
+          </div>
+
+          <div class="content-block">
+            <div class="section-title mb-2">Chave pública da CA</div>
+            <textarea class="form-control code-box" rows="10" readonly><%= caPublicKey %></textarea>
+          </div>
+
+          <div class="content-block mt-auto">
+            <div class="section-title mb-2">Tema visual</div>
+            <p class="text-body-secondary mb-3">O utilizador pode alternar entre dark mode e light mode usando o botão no topo do sistema.</p>
+            <div class="alert alert-primary-subtle border-0 mb-0 text-primary-emphasis">
+              <i class="bi bi-palette"></i> Interface redesenhada com foco enterprise e forte uso de Bootstrap 5.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="signature-tag">@2026_Psungo_Massunda_Manhica#</div>
+
+  <% if (currentUser.role === 'admin') { %>
+  <div class="modal fade" id="adminModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content admin-modal">
+        <div class="modal-header border-bottom border-body-tertiary">
+          <div>
+            <h5 class="modal-title fw-bold mb-1">Gestão de Utilizadores</h5>
+            <div class="small text-body-secondary">Criar, editar, desativar e apagar utilizadores do sistema.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="card border-0 surface-card mb-4">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h6 class="mb-0 fw-bold">Novo utilizador</h6>
+                <span class="badge text-bg-primary-subtle text-primary-emphasis">Admin create</span>
+              </div>
+              <form id="createUserForm" class="row g-3">
+                <div class="col-md-4"><input class="form-control" name="full_name" placeholder="Nome completo" required></div>
+                <div class="col-md-3"><input class="form-control" name="username" placeholder="Utilizador" required></div>
+                <div class="col-md-3"><input class="form-control" name="email" type="email" placeholder="Email" required></div>
+                <div class="col-md-2"><input class="form-control" name="password" type="password" placeholder="Senha" required></div>
+                <div class="col-md-3">
+                  <select class="form-select" name="role">
+                    <option value="user">user</option>
+                    <option value="admin">admin</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select" name="status">
+                    <option value="active">active</option>
+                    <option value="disabled">disabled</option>
+                  </select>
+                </div>
+                <div class="col-md-6 d-grid d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary" type="submit"><i class="bi bi-person-plus"></i> Criar utilizador</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div id="adminUsersTable">A carregar...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <script>
+    window.NEXUS = { userId: <%= currentUser.id %>, isAdmin: <%= currentUser.role === 'admin' ? 'true' : 'false' %> };
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
