@@ -72,15 +72,15 @@ Este projeto foi ajustado para o fluxo padrao do cPanel Application Manager e Pa
 
 1. No cPanel, confirme que o servidor tem `Application Manager` e um pacote Node.js instalado.
 2. Em `Application Manager`, crie uma aplicacao Node.js para o dominio `epsungo.com`.
-3. Use um `Application Root` fora de `public_html`, por exemplo `nodeapps/nexus-chat`.
+3. Use `Application Root = nodeapps/nexus-chat`.
 4. Defina o startup file como `app.js`.
 5. Aponte a aplicacao para a raiz do dominio ou para o caminho desejado em `epsungo.com`.
 6. No Terminal do cPanel, dentro da pasta da app, execute `npm install --omit=dev`.
 7. Configure as variaveis de ambiente da app:
    - `NODE_ENV=production`
    - `SESSION_SECRET=<valor forte>`
-   - `DATA_DIR=/home/SEU_USUARIO/nodeapps/nexus-chat/data`
-   - `UPLOAD_DIR=/home/SEU_USUARIO/nodeapps/nexus-chat/data/uploads`
+   - `DATA_DIR=/home/xenxynxr/nodeapps/nexus-chat/data`
+   - `UPLOAD_DIR=/home/xenxynxr/nodeapps/nexus-chat/data/uploads`
    - `ADMIN_FULL_NAME=Administrador Nexus`
    - `ADMIN_USERNAME=admin`
    - `ADMIN_EMAIL=admin@epsungo.com`
@@ -92,7 +92,7 @@ Este projeto foi ajustado para o fluxo padrao do cPanel Application Manager e Pa
 Se for usar `Git Version Control` do cPanel:
 
 1. Clone ou crie o repositorio no cPanel.
-2. Copie `.cpanel.yml.example` para `.cpanel.yml` e ajuste `APPPATH`.
+2. O repositorio ja inclui `.cpanel.yml` com `APPPATH=/home/xenxynxr/nodeapps/nexus-chat`.
 3. Faca o deploy pelo fluxo de `Pull or Deploy` do cPanel.
 
 ### Notas
