@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export APPPATH=$HOME/nodeapps/nexus-chat
+    - /bin/mkdir -p $APPPATH
+    - /usr/bin/rsync -az --delete --exclude '.git' --exclude 'node_modules' --exclude 'data' --exclude '.env' ./ $APPPATH/
+    - /bin/cd $APPPATH && /usr/bin/env npm install --omit=dev
+    - /bin/mkdir -p $APPPATH/tmp
+    - /bin/touch $APPPATH/tmp/restart.txt
